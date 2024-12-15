@@ -12,12 +12,10 @@ import llm
 from llm.cli import get_default_model
 
 # TODO: start from a URL e.g. --url=https://missas.com.br/ downloads the code
-#       and save to the temp folder
+#       and save to the temp folder. can't be used with --in-place
 # TODO: --path to pass a dir to read the files from, then copy the files to /tmp
 #       by default and edit there.
 # TODO: read the files in the dir and send to the LLM
-# TODO: in-place flag to edit in the directory instead of creating a temp dir.
-#       can't be used with --url
 # TODO: chat
 
 
@@ -85,15 +83,21 @@ def write(f, chunk):
 def register_commands(cli):
     @cli.command(context_settings={"ignore_unknown_options": True})
     @click.option("--path", help="Path to the directory with the files")
+    @click.option(
+        "--in-place",
+        default=False,
+        is_flag=True,
+        help="Overwrite the files in the <path> instead of create a temporary directory.",
+    )
     @click.argument("args", nargs=-1, type=click.UNPROCESSED)
-    def webdesign(args, path):
+    def webdesign(args, path, in_place):
         """
         TODO: Run IPython interpreter, passing through any arguments
         """
         path = Path(path)
-        temp_dir = Path(tempfile.mkdtemp())
-        start_server(temp_dir)
-        click.echo(f"Your files will be in the directory: {temp_dir}")
+        directory = path if in_place else Path(tempfile.mkdtemp())
+        start_server(directory)
+        click.echo(f"Your files will be in the directory: {directory}")
         url = f"http://localhost:{PORT}"
         assert webbrowser.open(url)
         click.echo(f"Serving files at {url}")
@@ -109,7 +113,7 @@ def register_commands(cli):
         prompt = "".join(args)
         response = model.prompt(prompt.format(html=index_content), system=SYSTEM_PROMPT)
 
-        filepath = temp_dir / "index.html"
+        filepath = directory / "index.html"
 
         with open(filepath, "w") as f:
             f.write("")
