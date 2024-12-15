@@ -77,6 +77,15 @@ def write(f, chunk):
     f.flush()
 
 
+def format_prompt(user_input, file_content):
+    return f"""\
+{user_input}
+
+```
+{file_content}
+```"""
+
+
 @llm.hookimpl
 def register_commands(cli):
     @cli.command(context_settings={"ignore_unknown_options": True})
@@ -112,8 +121,8 @@ def register_commands(cli):
         with open(path / filename) as f:
             index_content = f.read()
 
-        prompt = "".join(args)
-        response = model.prompt(prompt.format(html=index_content), system=SYSTEM_PROMPT)
+        prompt = format_prompt("".join(args), index_content)
+        response = model.prompt(prompt, system=SYSTEM_PROMPT)
 
         filepath = directory / filename
 
