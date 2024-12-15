@@ -81,6 +81,11 @@ def write(f, chunk):
 @llm.hookimpl
 def register_commands(cli):
     @cli.command(context_settings={"ignore_unknown_options": True})
+    @click.option(
+        "--filename",
+        default="index.html",
+        help="The file that will be sent to the LLM and where the output will be written.",
+    )
     @click.option("--path", help="Path to the directory with the files")
     @click.option(
         "--in-place",
@@ -89,10 +94,7 @@ def register_commands(cli):
         help="Overwrite the files in the <path> instead of create a temporary directory.",
     )
     @click.argument("args", nargs=-1, type=click.UNPROCESSED)
-    def webdesign(args, path, in_place):
-        """
-        TODO: Run IPython interpreter, passing through any arguments
-        """
+    def webdesign(args, filename, path, in_place):
         path = Path(path)
         directory = path if in_place else Path(tempfile.mkdtemp())
         click.echo(f"Your files will be in the directory: {directory}")
@@ -108,15 +110,13 @@ def register_commands(cli):
         if model.needs_key:
             model.key = llm.get_key(None, model.needs_key, model.key_env_var)
 
-        # TODO: read all files
-        with open(path / "index.html") as f:
+        with open(path / filename) as f:
             index_content = f.read()
 
         prompt = "".join(args)
         response = model.prompt(prompt.format(html=index_content), system=SYSTEM_PROMPT)
 
-        # TODO: let AI decide the name of the files
-        filepath = directory / "index.html"
+        filepath = directory / filename
 
         with open(filepath, "w") as f:
             f.write("")
