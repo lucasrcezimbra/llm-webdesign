@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from llm_webdesign.cli import parse
+from llm_webdesign import parse
 
 
 @pytest.fixture

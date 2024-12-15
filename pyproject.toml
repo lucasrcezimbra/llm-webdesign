@@ -21,7 +21,7 @@ Issues = "https://github.com/lucasrcezimbra/llm-webdesign/issues"
 CI = "https://github.com/lucasrcezimbra/llm-webdesign/actions"
 
 [project.entry-points.llm]
-ipython = "llm_webdesign.cli"
+ipython = "llm_webdesign"
 
 [project.optional-dependencies]
 test = ["pytest", "pytest-mock"]
