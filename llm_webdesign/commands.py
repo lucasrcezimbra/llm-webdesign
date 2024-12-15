@@ -1,17 +1,14 @@
 import http.server
 import os
+import socketserver
 import tempfile
 import threading
-import socketserver
-import subprocess
-import sys
 import webbrowser
 from functools import partial
 
 import click
 import llm
 from llm.cli import get_default_model
-
 
 # TODO: start from a URL e.g. --url=https://missas.com.br/ downloads the code
 #       and save to the temp folder
@@ -442,6 +439,7 @@ Create a home page for my site. This is another page:
 
 PORT = 9873  # TODO: receive as CLI arg
 
+
 def run_server(directory):
     os.chdir(directory)
     Handler = http.server.SimpleHTTPRequestHandler
@@ -484,7 +482,7 @@ def register_commands(cli):
         """
         temp_dir = tempfile.mkdtemp()
         start_server(temp_dir)
-        assert webbrowser.open(f'http://localhost:{PORT}')
+        assert webbrowser.open(f"http://localhost:{PORT}")
 
         model = llm.get_model(get_default_model())
         if model.needs_key:
@@ -493,15 +491,15 @@ def register_commands(cli):
         # TODO: read user prompt from user
         response = model.prompt(USER_PROMPT, system=SYSTEM_PROMPT)
 
-        filepath = f"{temp_dir}/index.html" # TODO: use pathlib
+        filepath = f"{temp_dir}/index.html"  # TODO: use pathlib
 
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             f.write("")
 
         my_print = partial(print, end="")
 
-        with open(filepath, 'a') as f:
+        with open(filepath, "a") as f:
             my_write = partial(write, f)
             parse(response, my_print, my_write)
 
-        input('x')
+        input("x")
