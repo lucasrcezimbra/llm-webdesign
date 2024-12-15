@@ -5,6 +5,7 @@ import tempfile
 import threading
 import webbrowser
 from functools import partial
+from pathlib import Path
 
 import click
 import llm
@@ -76,7 +77,8 @@ def register_commands(cli):
         """
         TODO: Run IPython interpreter, passing through any arguments
         """
-        temp_dir = tempfile.mkdtemp()
+        path = Path(path)
+        temp_dir = Path(tempfile.mkdtemp())
         start_server(temp_dir)
         assert webbrowser.open(f"http://localhost:{PORT}")
 
@@ -85,8 +87,7 @@ def register_commands(cli):
             model.key = llm.get_key(None, model.needs_key, model.key_env_var)
 
         # TODO: read all files
-        # TODO: use pathlib
-        with open(f"{path}/index.html") as f:
+        with open(path / "index.html") as f:
             index_content = f.read()
 
         # TODO: read user prompt from user
@@ -94,7 +95,7 @@ def register_commands(cli):
             USER_PROMPT.format(html=index_content), system=SYSTEM_PROMPT
         )
 
-        filepath = f"{temp_dir}/index.html"  # TODO: use pathlib
+        filepath = temp_dir / "index.html"
 
         with open(filepath, "w") as f:
             f.write("")
