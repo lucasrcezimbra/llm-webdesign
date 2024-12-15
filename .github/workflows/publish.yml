@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/llm-jupyter
+      url: https://pypi.org/p/llm-webdesign
     permissions:
       contents: read
       id-token: write
