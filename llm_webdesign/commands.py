@@ -93,7 +93,10 @@ def register_commands(cli):
         path = Path(path)
         temp_dir = Path(tempfile.mkdtemp())
         start_server(temp_dir)
-        assert webbrowser.open(f"http://localhost:{PORT}")
+        click.echo(f"Your files will be in the directory: {temp_dir}")
+        url = f"http://localhost:{PORT}"
+        assert webbrowser.open(url)
+        click.echo(f"Serving files at {url}")
 
         model = llm.get_model(get_default_model())
         if model.needs_key:
