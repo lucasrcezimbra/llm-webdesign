@@ -24,7 +24,12 @@ from llm.cli import get_default_model
 # TODO: improve prompt
 # TODO: make customizable
 SYSTEM_PROMPT = """
-You are a Web Designer. You should prioritize the code (HTML, CSS, and JS) in your response.
+You are a Web Designer.
+You should prioritize the code (HTML, CSS, and JS) in your response.
+Everything inside the ``` delimiters will be considered as code.
+All code you output will be served to the user.
+Do NOT return the tree of the project.
+Return ONLY the index.html. All CSS and JS should be inside this file.
 """
 PORT = 9876  # TODO: receive as CLI arg
 CODE_DELIMITER = "```"
