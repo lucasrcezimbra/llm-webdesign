@@ -1,5 +1,6 @@
 import http.server
 import os
+import shutil
 import socketserver
 import tempfile
 import threading
@@ -13,8 +14,6 @@ from llm.cli import get_default_model
 
 # TODO: start from a URL e.g. --url=https://missas.com.br/ downloads the code
 #       and save to the temp folder. can't be used with --in-place
-# TODO: --path to pass a dir to read the files from, then copy the files to /tmp
-#       by default and edit there.
 # TODO: read the files in the dir and send to the LLM
 # TODO: chat
 
@@ -96,8 +95,11 @@ def register_commands(cli):
         """
         path = Path(path)
         directory = path if in_place else Path(tempfile.mkdtemp())
-        start_server(directory)
         click.echo(f"Your files will be in the directory: {directory}")
+        if not in_place:
+            click.echo(f"Copying from {path} to {directory}")
+            shutil.copytree(path, directory, dirs_exist_ok=True)
+        start_server(directory)
         url = f"http://localhost:{PORT}"
         assert webbrowser.open(url)
         click.echo(f"Serving files at {url}")
@@ -113,6 +115,7 @@ def register_commands(cli):
         prompt = "".join(args)
         response = model.prompt(prompt.format(html=index_content), system=SYSTEM_PROMPT)
 
+        # TODO: let AI decide the name of the files
         filepath = directory / "index.html"
 
         with open(filepath, "w") as f:
