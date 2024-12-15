@@ -14,7 +14,6 @@ from llm.cli import get_default_model
 
 # TODO: start from a URL e.g. --url=https://missas.com.br/ downloads the code
 #       and save to the temp folder. can't be used with --in-place
-# TODO: read the files in the dir and send to the LLM
 # TODO: chat
 
 
