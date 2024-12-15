@@ -26,14 +26,7 @@ from llm.cli import get_default_model
 SYSTEM_PROMPT = """
 You are a Web Designer. You should prioritize the code (HTML, CSS, and JS) in your response.
 """
-USER_PROMPT = """
-Create a home page for my site. This is another page:
-```html
-{html}
-```
-"""
-
-PORT = 9873  # TODO: receive as CLI arg
+PORT = 9876  # TODO: receive as CLI arg
 
 
 def run_server(directory):
@@ -90,10 +83,8 @@ def register_commands(cli):
         with open(path / "index.html") as f:
             index_content = f.read()
 
-        # TODO: read user prompt from user
-        response = model.prompt(
-            USER_PROMPT.format(html=index_content), system=SYSTEM_PROMPT
-        )
+        prompt = "".join(args)
+        response = model.prompt(prompt.format(html=index_content), system=SYSTEM_PROMPT)
 
         filepath = temp_dir / "index.html"
 
