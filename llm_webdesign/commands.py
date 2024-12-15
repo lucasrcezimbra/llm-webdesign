@@ -30,9 +30,14 @@ PORT = 9876  # TODO: receive as CLI arg
 CODE_DELIMITER = "```"
 
 
+class QuietHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+    def log_message(self, *args, **kwargs):
+        pass
+
+
 def run_server(directory):
     os.chdir(directory)
-    Handler = http.server.SimpleHTTPRequestHandler
+    Handler = QuietHTTPRequestHandler
     # TODO: parametrize host
     with socketserver.TCPServer(("", PORT), Handler) as httpd:
         httpd.serve_forever()
@@ -40,8 +45,7 @@ def run_server(directory):
 
 def start_server(directory):
     # TODO: kill after finishing script
-    server_thread = threading.Thread(target=run_server, args=(directory,))
-    server_thread.daemon = True
+    server_thread = threading.Thread(target=run_server, args=(directory,), daemon=True)
     server_thread.start()
 
 
