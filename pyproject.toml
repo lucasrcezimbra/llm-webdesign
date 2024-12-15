@@ -6,16 +6,12 @@ readme = "README.md"
 authors = [
   {name = "Lucas Rangel Cezimbra", email="lucas@cezimbra.tec.br"},
 ]
-license = {text = "Apache-2.0"}
+license = {text = "MIT"}
 classifiers = [
     "License :: OSI Approved :: Apache Software License"
 ]
 dependencies = [
-    "ai",
     "llm",
-    "web",
-    "webdesign",
-    "webdesigner",
 ]
 
 [project.urls]
