@@ -35,6 +35,34 @@ def test_parse_code():
     assert text_chunks == []
 
 
+def test_parse_code_splitted_delimiter():
+    """
+    LLMs return the code delimiter in two separated chunks e.g. `` and `\n\n
+    """
+    chunks = ["```\n", "code\n", "``", "`\n\n"]
+    code_chunks = []
+    text_chunks = []
+
+    parse(chunks, code_callback=code_chunks.append, text_callback=text_chunks.append)
+
+    assert code_chunks == ["code\n"]
+    assert text_chunks == []
+
+
+def test_parse_code_with_part_delimiter():
+    """
+    LLMs return the code delimiter in two separated chunks e.g. `` and `\n\n
+    """
+    chunks = ["```\n", "`code`\n", "``", "`\n\n"]
+    code_chunks = []
+    text_chunks = []
+
+    parse(chunks, code_callback=code_chunks.append, text_callback=text_chunks.append)
+
+    assert code_chunks == ["`code`\n"]
+    assert text_chunks == []
+
+
 def test_parse_text_and_code():
     chunks = ["Text before code\n", "```\n", "code\n", "```\n", "Text after code"]
     code_chunks = []

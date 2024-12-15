@@ -27,6 +27,7 @@ SYSTEM_PROMPT = """
 You are a Web Designer. You should prioritize the code (HTML, CSS, and JS) in your response.
 """
 PORT = 9876  # TODO: receive as CLI arg
+CODE_DELIMITER = "```"
 
 
 def run_server(directory):
@@ -44,12 +45,22 @@ def start_server(directory):
     server_thread.start()
 
 
-def parse(chunks, text_callback, code_callback):
+def parse(chunks, text_callback, code_callback, code_delimiter=CODE_DELIMITER):
+    # TODO: refactor this crazy logic
     code = False
+    current_line = ""
     for chunk in chunks:
-        if "```" in chunk:
+        if current_line.endswith("\n"):
+            # TODO: remove hard coded `
+            if code and "`" in current_line and code_delimiter not in current_line:
+                code_callback(current_line)
+            current_line = ""
+        current_line += chunk
+        if code_delimiter in chunk or code_delimiter in current_line:
             # TODO: fix this for cases when the chunk contains more than ```
             code = not code
+            continue
+        if "`" in current_line:
             continue
 
         callback = code_callback if code else text_callback
